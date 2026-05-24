@@ -1,9 +1,9 @@
-# tivoli — a github carousel
+# tivoli
 
 A Go static site generator that produces a single-page carousel for showcasing
 GitHub repos. Works on mobile and desktop. No npm, no framework.
 
-**Demo:** [awkward-crow.surge.sh](https://awkward-crow.surge.sh)
+**Demo:** [awkward-crow.surge.sh](https://awkward-crow.surge.sh) &nbsp; ![CI](https://github.com/awkward-crow/tivoli/actions/workflows/ci.yml/badge.svg)
 
 ## what's here
 
@@ -72,3 +72,7 @@ Output goes to `site/`. Preview locally:
 ```sh
 python3 -m http.server 8080 --directory site
 ```
+
+## deploy
+
+Upload the `site/` directory to any static host — Netlify, GitHub Pages, Vercel, [surge](https://surge.sh), etc.
