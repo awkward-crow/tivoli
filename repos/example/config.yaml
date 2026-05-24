@@ -1,0 +1,26 @@
+title:
+  text: My Project
+  fg: 0xffffff
+  font: georgia       # georgia, times, helvetica, arial, verdana, courier
+  style: normal       # CSS font-style, e.g. italic
+  size: large         # small / medium / large / xlarge or any CSS value
+
+short:
+  text: One-line description shown on the slide.
+  fg: 0xffffff        # defaults to title fg
+  size: small
+
+image: ./screenshot.webp   # first image file in the dir is used if omitted
+# image:                   # long form with layout control:
+#   path: ./screenshot.webp
+#   size: cover            # CSS background-size (cover, contain, …)
+#   position: center       # CSS background-position
+
+url: https://github.com/you/myproject
+order: 1              # lower = earlier; omit to sort last then alphabetically
+theme: dark           # dark (default) or light
+
+description:
+  text: ./description.md
+  fg: 0x222222
+  bg: 0xf0f0f2

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="carousel" id="carousel" data-theme="{{(index .Repos 0).Theme}}">
+    <div class="carousel-track" id="track">
+      {{range $i, $r := .Repos}}
+      <section class="slide" data-index="{{$i}}" data-theme="{{$r.Theme}}" style="background-image: url('{{$r.ImagePath}}'); background-size: {{$r.ImageSize}}; background-position: {{$r.ImagePosition}}; background-repeat: no-repeat">
+        <div class="slide-content">
+          <h2 class="slide-title" style="{{$r.TitleStyle}}">
+            <a href="{{$r.URL}}" target="_blank" rel="noopener noreferrer">{{$r.TitleText}}</a>
+          </h2>
+          {{if $r.ShortText}}<p class="slide-short" style="{{$r.ShortStyle}}">{{$r.ShortText}}</p>{{end}}
+        </div>
+      </section>
+      {{end}}
+    </div>
+
+    <div class="scroll-hint" id="scroll-hint" aria-hidden="true">
+      <span class="chevron"></span>
+      <span class="chevron"></span>
+    </div>
+
+    {{if gt (len .Repos) 1}}
+    <button class="nav-btn nav-btn--prev" id="prev" aria-label="Previous project">&#8249;</button>
+    <button class="nav-btn nav-btn--next" id="next" aria-label="Next project">&#8250;</button>
+    <div class="dots" id="dots" role="tablist" aria-label="Project navigation">
+      {{range $i, $r := .Repos}}
+      <button class="dot{{if eq $i 0}} dot--active{{end}}"
+              data-index="{{$i}}"
+              role="tab"
+              aria-selected="{{if eq $i 0}}true{{else}}false{{end}}"
+              aria-label="{{$r.TitleText}}"></button>
+      {{end}}
+    </div>
+    {{end}}
+  </div>
+
+  <div class="desc-panel" id="desc"></div>
+
+  <script>var descData = {{.DescJSON}};</script>
+  <script src="carousel.js"></script>
+</body>
+</html>
