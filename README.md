@@ -42,6 +42,7 @@ short:
   text: One-liner shown on the slide.
   fg: 0xffffff        # optional — inherits title fg
   font: times         # optional — inherits title font
+  style: italic       # optional — CSS font-style
   size: medium        # optional — same keywords as title size
 
 image:

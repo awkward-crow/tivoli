@@ -53,10 +53,11 @@ type titleCfg struct {
 }
 
 type shortCfg struct {
-	Text string `yaml:"text"`
-	Font string `yaml:"font"`
-	FG   Color  `yaml:"fg"`
-	Size string `yaml:"size"`
+	Text  string `yaml:"text"`
+	Font  string `yaml:"font"`
+	FG    Color  `yaml:"fg"`
+	Size  string `yaml:"size"`
+	Style string `yaml:"style"`
 }
 
 type descCfg struct {
@@ -436,8 +437,8 @@ func loadRepo(base, name string) (Repo, error) {
 		titleFG,
 		resolveSize(cfg.Title.Size, "clamp(3rem, 9vw, 6rem)"),
 	))
-	shortStyle := template.CSS(fmt.Sprintf("font-family: %s; color: %s; font-size: %s",
-		shortFont, shortFG,
+	shortStyle := template.CSS(fmt.Sprintf("font-family: %s; font-style: %s; color: %s; font-size: %s",
+		shortFont, orStr(cfg.Short.Style, "normal"), shortFG,
 		resolveSize(cfg.Short.Size, "clamp(1.2rem, 3vw, 1.6rem)"),
 	))
 
@@ -549,6 +550,11 @@ func loadRepo(base, name string) (Repo, error) {
 func main() {
 	reposDir := flag.String("repos", "repos", "directory of repo configs")
 	outDir := flag.String("out", "site", "output directory")
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "usage: tivoli [-repos DIR] [-out DIR]\n\n")
+		fmt.Fprintf(os.Stderr, "Generates a single-page carousel site from a directory of repo configs.\n\n")
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 
 	repos, err := loadRepos(*reposDir)
