@@ -3,7 +3,9 @@
 A Go static site generator that produces a single-page carousel for showcasing
 GitHub repos. Works on mobile and desktop. No npm, no framework.
 
-**Demo:** [awkward-crow.surge.sh](https://awkward-crow.surge.sh) &nbsp; ![CI](https://github.com/awkward-crow/tivoli/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/awkward-crow/tivoli/actions/workflows/ci.yml/badge.svg)
+
+**Demo:** [awkward-crow.surge.sh](https://awkward-crow.surge.sh)
 
 ## what's here
 
@@ -60,6 +62,36 @@ description:
 
 Colors use `0xRRGGBB` or `0xRRGGBBAA` notation (no quotes needed). `#RRGGBB` also
 works but requires quotes in YAML since `#` starts a comment.
+
+## upstream repos
+
+A repo on another site can advertise its own slide by adding a `.tivoli/`
+directory to its root:
+
+```
+.tivoli/
+  config.yaml       full slide config (same format as above)
+  description.md    optional — path is relative to .tivoli/
+  image.webp        optional background image
+```
+
+To include such a repo in your carousel, add a stub entry under `repos/` with
+only `url` set (no `title`):
+
+```
+repos/myproject/
+  config.yaml       stub — url only
+```
+
+```yaml
+url: https://github.com/you/myproject
+order: 2            # optional — overrides the upstream order
+```
+
+Tivoli does a shallow sparse clone of the upstream repo, reads
+`.tivoli/config.yaml`, and uses it as the full slide config. The `url` in the
+stub is always authoritative; `order` in the stub overrides the upstream value
+if set.
 
 ## build
 

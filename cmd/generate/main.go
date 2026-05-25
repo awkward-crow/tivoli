@@ -231,7 +231,7 @@ func displayPath(path, repoRoot string) string {
 // ── Remote repo fetching ───────────────────────────────────────────────────
 
 // fetchRemoteRepo does a depth-1 sparse clone of repoURL, checking out only
-// the tivoli/ directory.  Returns the path to the temp dir (the repo root).
+// the .tivoli/ directory.  Returns the path to the temp dir (the repo root).
 // The caller is responsible for os.RemoveAll when done.
 func fetchRemoteRepo(repoURL string) (string, error) {
 	tmp, err := os.MkdirTemp("", "tivoli-*")
@@ -252,7 +252,7 @@ func fetchRemoteRepo(repoURL string) (string, error) {
 		os.RemoveAll(tmp)
 		return "", fmt.Errorf("git sparse-checkout init: %w", err)
 	}
-	if err := run("git", "-C", tmp, "sparse-checkout", "set", "tivoli"); err != nil {
+	if err := run("git", "-C", tmp, "sparse-checkout", "set", ".tivoli"); err != nil {
 		os.RemoveAll(tmp)
 		return "", fmt.Errorf("git sparse-checkout set: %w", err)
 	}
@@ -264,7 +264,7 @@ func fetchRemoteRepo(repoURL string) (string, error) {
 }
 
 // expandSparseCone adds extra directories to the sparse checkout and
-// re-materialises them so that files outside tivoli/ can be read.
+// re-materialises them so that files outside .tivoli/ can be read.
 func expandSparseCone(repoDir string, dirs []string) error {
 	args := append([]string{"-C", repoDir, "sparse-checkout", "add"}, dirs...)
 	cmd := exec.Command("git", args...)
@@ -320,7 +320,7 @@ func loadRepo(base, name string) (Repo, error) {
 	}
 
 	// ── Remote config resolution ──────────────────────────────────────────
-	// A stub config has a url but no title.  We fetch tivoli/config.yaml
+	// A stub config has a url but no title.  We fetch .tivoli/config.yaml
 	// from the upstream repo and use that instead.  The local config may
 	// only contribute an order override.
 
@@ -337,21 +337,21 @@ func loadRepo(base, name string) (Repo, error) {
 		if fetchErr != nil {
 			return Repo{}, fmt.Errorf("fetching remote repo: %w", fetchErr)
 		}
-		tivoliDir := filepath.Join(tmp, "tivoli")
+		tivoliDir := filepath.Join(tmp, ".tivoli")
 		remoteCfgPath := filepath.Join(tivoliDir, "config.yaml")
 		if _, statErr := os.Stat(remoteCfgPath); statErr != nil {
 			os.RemoveAll(tmp)
-			return Repo{}, fmt.Errorf("upstream repo has no tivoli/config.yaml")
+			return Repo{}, fmt.Errorf("upstream repo has no .tivoli/config.yaml")
 		}
 		remoteCfgData, err := os.ReadFile(remoteCfgPath)
 		if err != nil {
 			os.RemoveAll(tmp)
-			return Repo{}, fmt.Errorf("reading remote tivoli/config.yaml: %w", err)
+			return Repo{}, fmt.Errorf("reading remote .tivoli/config.yaml: %w", err)
 		}
 		var remoteCfg rawConfig
 		if err := yaml.Unmarshal(remoteCfgData, &remoteCfg); err != nil {
 			os.RemoveAll(tmp)
-			return Repo{}, fmt.Errorf("parsing remote tivoli/config.yaml: %w", err)
+			return Repo{}, fmt.Errorf("parsing remote .tivoli/config.yaml: %w", err)
 		}
 		remoteCfg.URL = cfg.URL // stub URL is authoritative
 		if localOrder != 0 {
@@ -377,7 +377,7 @@ func loadRepo(base, name string) (Repo, error) {
 
 	// ── Sparse-checkout expansion for external references ─────────────────
 	// Config paths (image, description) may use relative paths that escape
-	// tivoli/ (e.g. ../docs/summary.md).  Expand the sparse cone to include
+	// .tivoli/ (e.g. ../docs/summary.md).  Expand the sparse cone to include
 	// those directories before we try to read the files.
 
 	if isRemote {
