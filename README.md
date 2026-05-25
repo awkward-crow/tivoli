@@ -1,9 +1,10 @@
 # tivoli
 
+![CI](https://github.com/awkward-crow/tivoli/actions/workflows/ci.yml/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/awkward-crow/tivoli)](https://goreportcard.com/report/github.com/awkward-crow/tivoli)
+
 A Go static site generator that produces a single-page carousel for showcasing
 GitHub repos. Works on mobile and desktop. No npm, no framework.
-
-![CI](https://github.com/awkward-crow/tivoli/actions/workflows/ci.yml/badge.svg)
 
 **Demo:** [awkward-crow.surge.sh](https://awkward-crow.surge.sh)
 
