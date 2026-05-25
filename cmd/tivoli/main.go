@@ -1,10 +1,13 @@
 package main
 
 import (
+	"embed"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"html/template"
 	"io"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -16,6 +19,9 @@ import (
 	"github.com/yuin/goldmark/renderer/html"
 	"gopkg.in/yaml.v3"
 )
+
+//go:embed static/* templates/*
+var assets embed.FS
 
 // ── Color type ─────────────────────────────────────────────────────────────
 
@@ -541,23 +547,27 @@ func loadRepo(base, name string) (Repo, error) {
 // ── Main ───────────────────────────────────────────────────────────────────
 
 func main() {
-	repos, err := loadRepos("repos")
+	reposDir := flag.String("repos", "repos", "directory of repo configs")
+	outDir := flag.String("out", "site", "output directory")
+	flag.Parse()
+
+	repos, err := loadRepos(*reposDir)
 	if err != nil {
 		die("loading repos: %v", err)
 	}
 	if len(repos) == 0 {
-		die("no repos found in repos/ directory")
+		die("no repos found in %s", *reposDir)
 	}
 
-	if err := os.MkdirAll("site/img", 0o755); err != nil {
-		die("creating site/img: %v", err)
+	if err := os.MkdirAll(filepath.Join(*outDir, "img"), 0o755); err != nil {
+		die("creating output directory: %v", err)
 	}
 
 	for i, r := range repos {
 		if r.imageSrc == "" {
 			continue
 		}
-		dst := filepath.Join("site", r.ImagePath)
+		dst := filepath.Join(*outDir, r.ImagePath)
 		if err := copyFile(r.imageSrc, dst); err != nil {
 			fmt.Fprintf(os.Stderr, "warning: skipping image for %s: %v\n", r.DirName, err)
 			repos[i].ImagePath = ""
@@ -571,7 +581,7 @@ func main() {
 		}
 	}
 
-	if err := copyDir("static", "site"); err != nil {
+	if err := copyEmbedDir(assets, "static", *outDir); err != nil {
 		die("copying static files: %v", err)
 	}
 
@@ -585,14 +595,14 @@ func main() {
 		die("marshaling desc data: %v", err)
 	}
 
-	tmpl, err := template.New("index.html.tmpl").ParseFiles("templates/index.html.tmpl")
+	tmpl, err := template.New("index.html.tmpl").ParseFS(assets, "templates/index.html.tmpl")
 	if err != nil {
 		die("parsing template: %v", err)
 	}
 
-	f, err := os.Create("site/index.html")
+	f, err := os.Create(filepath.Join(*outDir, "index.html"))
 	if err != nil {
-		die("creating site/index.html: %v", err)
+		die("creating index.html: %v", err)
 	}
 	defer f.Close()
 
@@ -604,7 +614,7 @@ func main() {
 		die("rendering template: %v", err)
 	}
 
-	fmt.Printf("generated site/ with %d repo(s)\n", len(repos))
+	fmt.Printf("generated %s with %d repo(s)\n", *outDir, len(repos))
 }
 
 // ── File utils ─────────────────────────────────────────────────────────────
@@ -627,17 +637,21 @@ func copyFile(src, dst string) error {
 	return err
 }
 
-func copyDir(src, dst string) error {
-	return filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+func copyEmbedDir(fsys embed.FS, src, dst string) error {
+	return fs.WalkDir(fsys, src, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		rel, _ := filepath.Rel(src, path)
 		target := filepath.Join(dst, rel)
-		if info.IsDir() {
+		if d.IsDir() {
 			return os.MkdirAll(target, 0o755)
 		}
-		return copyFile(path, target)
+		data, err := fsys.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		return os.WriteFile(target, data, 0o644)
 	})
 }
 

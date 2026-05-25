@@ -10,12 +10,12 @@ GitHub repos. Works on mobile and desktop. No npm, no framework.
 ## what's here
 
 ```
-cmd/generate/main.go      generator
-templates/index.html.tmpl page template
-static/style.css          CSS scroll-snap carousel
-static/carousel.js        nav arrows, dots, keyboard
-repos/                    one directory per repo (see below)
-site/                     generated output — do not commit (gitignored)
+cmd/tivoli/main.go                 generator
+cmd/tivoli/templates/index.html.tmpl  page template
+cmd/tivoli/static/style.css        CSS scroll-snap carousel
+cmd/tivoli/static/carousel.js      nav arrows, dots, keyboard
+repos/                             one directory per repo (see below)
+site/                              generated output — do not commit (gitignored)
 ```
 
 ## adding a repo
