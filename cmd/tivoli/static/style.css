@@ -213,7 +213,7 @@ body {
   50%       { transform: translateY(5px); }
 }
 
-.carousel[data-theme="dark"]  .scroll-hint { color: rgba(255, 255, 255, 0.35); }
+.carousel[data-theme="dark"]  .scroll-hint { color: rgba(255, 255, 255, 0.65); }
 .carousel[data-theme="light"] .scroll-hint { color: rgba(0, 0, 0, 0.25); }
 
 @media (min-width: 640px) {
