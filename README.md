@@ -11,15 +11,13 @@ GitHub repos. Works on mobile and desktop. No npm, no framework.
 ## what's here
 
 ```
-cmd/tivoli/main.go                 generator
+cmd/tivoli/main.go                    generator
 cmd/tivoli/templates/index.html.tmpl  page template
-cmd/tivoli/static/style.css        CSS scroll-snap carousel
-cmd/tivoli/static/carousel.js      nav arrows, dots, keyboard
-repos/                             one directory per repo (see below)
-site/                              generated output — do not commit (gitignored)
+cmd/tivoli/static/style.css           CSS scroll-snap carousel
+cmd/tivoli/static/carousel.js         nav arrows, dots, keyboard
 ```
 
-## adding a repo
+## adding a repo to the carousel
 
 Create a directory under `repos/`:
 
@@ -67,7 +65,7 @@ works but requires quotes in YAML since `#` starts a comment.
 ## upstream repos
 
 A repo on another site can advertise its own slide by adding a `.tivoli/`
-directory to its root:
+config directory to its root:
 
 ```
 .tivoli/
@@ -94,13 +92,23 @@ Tivoli does a shallow sparse clone of the upstream repo, reads
 stub is always authoritative; `order` in the stub overrides the upstream value
 if set.
 
-## build
+## build and run
+
+From inside this repo:
 
 ```sh
-go run ./cmd/generate
+go run ./cmd/tivoli
 ```
 
-Output goes to `site/`. Preview locally:
+Or build and install the binary once, then run it from anywhere:
+
+```sh
+go install ./cmd/tivoli   # installs to ~/go/bin/tivoli by default
+tivoli -repos ~/my-site/repos -out ~/my-site/site
+```
+
+The directories default to `repos/` and `site/` relative to the working directory if no
+flags are given. Output goes to the `site/` directory. Preview locally:
 
 ```sh
 python3 -m http.server 8080 --directory site
