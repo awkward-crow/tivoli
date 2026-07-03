@@ -6,7 +6,7 @@
 A Go static site generator that produces a single-page carousel for showcasing
 GitHub repos. Works on mobile and desktop. No npm, no framework.
 
-**Demo:** [awkward-crow.surge.sh](https://awkward-crow.surge.sh)
+**Demo:** [project-carousel.netlify.app](https://project-carousel.netlify.app/)
 
 ## what's here
 
